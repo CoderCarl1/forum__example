@@ -34,6 +34,49 @@ main {
   }
 }
 
+.dialog-wrapper {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background-color: var(--clr-neutral-800);
+}
+.dialog {
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-inline: auto;
+    width: fit-content;
+  }
+  padding-block: 7rem;
+
+  width: min(100% - 1rem, 60rem);
+  height: min(100% - 1rem, 44rem);
+  background-color: var(--clr-neutral-200);
+  &__input {
+    #post-content {
+      height: 15rem;
+    }
+    input {
+      border: 3px solid var(--clr-primary-400);
+      border-radius: 50px;
+      width: min(100% - 1rem, 40rem);
+      &::placeholder {
+        color: var(--clr-neutral-600);
+        font-size: var(fs-500);
+      }
+    }
+  }
+  button {
+    background-color: var(--clr-primary-400);
+    color: var(--clr-neutral-100);
+    border-radius: 50px;
+    width: 18rem;
+    height: 5rem;
+  }
+}
+
 .sr-only {
   border: 0 !important;
   clip: rect(1px, 1px, 1px, 1px) !important;

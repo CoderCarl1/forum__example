@@ -1,13 +1,18 @@
+import Title from './components/Title';
+import PostProvider, { usePostContext } from './context/postContext';
 import './styles/global.css';
-
+import Modal from './components/Modal';
 function App() {
+  const { modalState } = usePostContext();
+  console.log({ modalState });
+  // const { newPostModal, replyModal } = modalState;
   return (
-    <div className="container">
-      <div className="title-container">
-        <h1 className="title-container__title">Maths For 'em</h1>
-        <button className="title-container__button">New Post</button>
-      </div>
-    </div>
+    <>
+      <PostProvider>
+        <Title />
+        <Modal mode={'newPost'} />
+      </PostProvider>
+    </>
   );
 }
 
