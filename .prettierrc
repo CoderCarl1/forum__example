@@ -1,0 +1,10 @@
+{
+  "proseWrap": "always",
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "jsxBracketSameLine": false,
+  "arrowParens": "always",
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true
+}

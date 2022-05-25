@@ -1,46 +1,23 @@
-# Getting Started with Create React App
+# TutorTree
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+a minor task set by Tutor tree as part of the interview process.
 
-## Available Scripts
+[designs](https://xd.adobe.com/view/8f109c8e-4b21-41be-5c32-f49d32a015be-f921/specs/)
 
-In the project directory, you can run:
+## Requirements
 
-### `npm start`
+- build in React
+- Specs:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+  1. The site should initially be empty except for the title and New Post
+     button.
+  2. design 2 is for a Modal which will pop up upon clicking the new post
+     button. This will allow a user to enter
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+  - a username; and
+  - a post,
+    > Multiple posts can be made.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+  3. Design 3 is a similar modal for Replies
+  4. Finally, there are up and down arrows for voting on posts, and a number
+     which displays (upvotes - downvotes).
