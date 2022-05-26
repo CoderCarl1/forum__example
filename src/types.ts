@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
 
-export type Post = {
-  content?: string;
-  pseudonym?: string;
+export type PostType = {
+  content: string;
+  pseudonym: string;
 };
 
 export type Posts = {
-  posts?: Post[] | Post;
+  posts?: PostType[] | PostType;
 };
 export type modalTypes = { mode: 'newPost' | 'reply' };
 
@@ -15,8 +15,8 @@ type modalStatus = {
   replyModal: Boolean;
 };
 export type PostContextTypes = {
-  addPost: (data: Post) => void;
-  addReply: (data: Post) => void;
+  addPost: (data: PostType) => void;
+  addReply: (data: PostType) => void;
   modalState: modalStatus;
   showModal: (mode: modalTypes) => void;
   closeModal: () => void;

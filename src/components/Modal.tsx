@@ -1,4 +1,4 @@
-import type { RefObject } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 import { usePostContext } from '../context/postContext';
 import type { modalTypes } from '../types';
 import UseClickOutside from '../utils/useClickOutside';
@@ -6,20 +6,28 @@ import UseClickOutside from '../utils/useClickOutside';
 export default function Modal({ mode = 'newPost' }: modalTypes) {
   const { closeModal } = usePostContext();
   const modalRef = UseClickOutside(closeModal) as RefObject<HTMLDivElement>;
+  const modalWrapper = useRef<HTMLDivElement | null>(null);
   const modeMap = {
     newPost: 'Write your post....',
     reply: 'Write your reply....',
   };
+
   return (
-    <div className="dialog-wrapper">
-      <div ref={modalRef} aria-role="dialog" className="dialog">
+    <div className="dialog-wrapper" ref={modalWrapper}>
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-description={modeMap[mode]}
+        aria-label={`Write your ${mode}`}
+        className="dialog"
+      >
         <form action="">
           <div className="dialog__input">
             <label htmlFor="post-content" className="sr-only">
               {modeMap[mode]}
             </label>
-            <input
-              type="text"
+            <textarea
+              // type="text"
               name="post.content"
               id="post-content"
               placeholder={modeMap[mode]}

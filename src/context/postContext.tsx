@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 import type {
   modalTypes,
-  Post,
+  PostType,
   PostContextTypes,
   PostProviderProps,
   Posts,
@@ -35,13 +35,13 @@ function PostProvider({ children }: PostProviderProps) {
       replyModal: false,
     });
   }
-  function addPost(data: Post) {
+  function addPost(data: PostType) {
     /** TODO: add functionality to update posts */
     // setPosts(data);
     console.log('NEW POST added');
   }
 
-  function addReply(data: Post) {
+  function addReply(data: PostType) {
     console.log('reply added');
   }
 
