@@ -7,7 +7,7 @@ function App() {
   const { modalState } = usePostContext();
   console.log({ modalState });
   const lorem =
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis ab optio enim non nemo hic soluta porro. Pariatur in itaque fugit soluta maxime possimus dolore!';
+    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis ab optio enim non nemo hic soluta porro. Pariatur in itaque fugit soluta maxime possimus dolore!Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis ab optio enim non nemo hic soluta porro. Pariatur in itaque fugit soluta maxime possimus dolore!';
   // const { newPostModal, replyModal } = modalState;
   return (
     <>
