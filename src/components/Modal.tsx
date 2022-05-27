@@ -1,16 +1,32 @@
-import { RefObject, useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { usePostContext } from '../context/postContext';
-import type { modalTypes } from '../types';
+import type { modalTypes, newPostType, replyPostType } from '../types';
 import UseClickOutside from '../utils/useClickOutside';
 
-export default function Modal({ mode = 'newPost' }: modalTypes) {
-  const { closeModal } = usePostContext();
+export default function Modal(mode: modalTypes = 'newPost') {
+  const { closeModal, addPost, addReply } = usePostContext();
   const modalRef = UseClickOutside(closeModal) as RefObject<HTMLDivElement>;
   const modalWrapper = useRef<HTMLDivElement | null>(null);
+  const [pseudonym, setPseudonym] = useState('');
+  const [content, setContent] = useState('');
+
   const modeMap = {
     newPost: 'Write your post....',
     reply: 'Write your reply....',
   };
+
+  function handleSubmit(evt: React.FormEvent<HTMLButtonElement>) {
+    evt.preventDefault();
+    const data = {
+      pseudonym,
+      content,
+    };
+    if (mode === 'newPost') {
+      addPost(data);
+      return;
+    }
+    addReply(data as replyPostType);
+  }
 
   return (
     <div className="dialog-wrapper" ref={modalWrapper}>
@@ -27,7 +43,8 @@ export default function Modal({ mode = 'newPost' }: modalTypes) {
               {modeMap[mode]}
             </label>
             <textarea
-              // type="text"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               name="post.content"
               id="post-content"
               placeholder={modeMap[mode]}
@@ -39,12 +56,16 @@ export default function Modal({ mode = 'newPost' }: modalTypes) {
             </label>
             <input
               type="text"
+              value={pseudonym}
+              onChange={(e) => setPseudonym(e.target.value)}
               name="post.pseudonym"
               id="post-pseudonym"
               placeholder="Enter your pseudonym"
             />
           </div>
-          <button>{mode === 'newPost' ? 'Post' : 'Reply'}</button>
+          <button onClick={handleSubmit}>
+            {mode === 'newPost' ? 'Post' : 'Reply'}
+          </button>
         </form>
       </div>
     </div>

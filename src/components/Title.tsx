@@ -6,7 +6,7 @@ export default function Title() {
     <div className="title-container">
       <h1 className="title-container__title">Maths For 'em</h1>
       <button
-        onClick={() => showModal({ mode: 'reply' })}
+        onClick={() => showModal('newPost')}
         className="title-container__button"
       >
         New Post

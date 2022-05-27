@@ -1,58 +1,92 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { PostType } from '../types';
 import { MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
+import { usePostContext } from '../context/postContext';
 
 function usePost() {
-  const [likes, setLikes] = useState(0);
+  const [likesState, setLikesState] = useState(0);
 
   function likePost() {
-    setLikes((prev) => prev + 1);
+    setLikesState((prev) => prev + 1);
   }
   function dislikePost() {
-    setLikes((prev) => prev - 1);
+    setLikesState((prev) => prev - 1);
   }
 
   return {
-    likes,
+    likesState,
+    setLikesState,
     likePost,
     dislikePost,
   };
 }
 
-export default function Post({ pseudonym, content }: PostType) {
-  const { likes, likePost, dislikePost } = usePost();
+export default function Post({
+  pseudonym,
+  content,
+  id,
+  likes,
+  replies = [],
+}: PostType) {
+  const { likesState, setLikesState, likePost, dislikePost } = usePost();
+  const { showModal, updateLikes } = usePostContext();
+
+  useEffect(() => {
+    if (likesState !== likes) {
+      setLikesState(likes);
+    }
+  }, []);
+
+  useEffect(() => {
+    updateLikes({ id, likes: likesState });
+  }, [likesState]);
 
   return (
-    <div className="post">
-      <div className="post__likes-wrapper">
-        <button className="post__likes-button" onClick={likePost}>
-          <span className="sr-only">like post</span>
+    <>
+      <div className="post">
+        <div className="post__likes-wrapper">
+          <button className="post__likes-button" onClick={likePost}>
+            <span className="sr-only">like post</span>
 
-          <MdOutlineExpandLess
-            size="1.5em"
-            aria-hidden="true"
-            className="post__likes-button-arrow"
-          />
-        </button>
-        <p className="post__likes-counter">{likes}</p>
-        <button className="post__likes-button" onClick={dislikePost}>
-          <span className="sr-only">dislike post</span>
-          <MdOutlineExpandMore
-            size="1.5em"
-            aria-hidden="true"
-            className="post__likes-button-arrow"
-          />
-        </button>
+            <MdOutlineExpandLess
+              size="1.5em"
+              aria-hidden="true"
+              className="post__likes-button-arrow"
+            />
+          </button>
+          <p className="post__likes-counter">{likesState}</p>
+          <button className="post__likes-button" onClick={dislikePost}>
+            <span className="sr-only">dislike post</span>
+            <MdOutlineExpandMore
+              size="1.5em"
+              aria-hidden="true"
+              className="post__likes-button-arrow"
+            />
+          </button>
+        </div>
+        <div className="post__content-wrapper">
+          <h3 className="post__content-pseudonym">{pseudonym}</h3>
+          <p className="post__content-content">
+            {content}
+            <span className="post__reply-button-wrapper">
+              <button
+                className="post__reply-button"
+                data-id={id}
+                onClick={() => showModal('reply')}
+              >
+                Reply
+              </button>
+            </span>
+          </p>
+        </div>
       </div>
-      <div className="post__content-wrapper">
-        <h3 className="post__content-pseudonym">{pseudonym}</h3>
-        <p className="post__content-content">
-          {content}
-          <div className="post__reply-button-wrapper">
-            <button className="post__reply-button">Reply</button>
-          </div>
-        </p>
-      </div>
-    </div>
+      {replies.length > 0 ? (
+        <div className="post__reply-wrapper">
+          {replies.map((post) => (
+            <Post {...post} />
+          ))}
+        </div>
+      ) : null}
+    </>
   );
 }
