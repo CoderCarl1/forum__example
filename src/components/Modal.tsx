@@ -1,31 +1,96 @@
+import { log } from 'console';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { usePostContext } from '../context/postContext';
 import type { modalTypes, newPostType, replyPostType } from '../types';
 import UseClickOutside from '../utils/useClickOutside';
 
-export default function Modal(mode: modalTypes = 'newPost') {
+function useModal() {
+  const [error, setError] = useState({ msg: '', type: '' });
+  const [pseudonym, setPseudonym] = useState('');
+  const [content, setContent] = useState('');
+
+  function validateContent() {
+    let errorValues = {
+      msg: '',
+      type: '',
+    };
+    if (pseudonym === '') {
+      errorValues = {
+        msg: 'Please enter your Pseudonym',
+        type: 'pseudonym',
+      };
+    }
+    if (content === '') {
+      errorValues = {
+        msg: 'Your message cannot be empty',
+        type: 'content',
+      };
+    }
+    if (Object.values(errorValues).some(Boolean)) {
+      setError(errorValues);
+      return false;
+    }
+    return true;
+  }
+
+  return {
+    error,
+    pseudonym,
+    setPseudonym,
+    content,
+    setContent,
+    validateContent,
+  };
+}
+
+export default function Modal({ mode, parentId }: modalTypes) {
+  const {
+    error,
+    pseudonym,
+    setPseudonym,
+    content,
+    setContent,
+    validateContent,
+  } = useModal();
   const { closeModal, addPost, addReply } = usePostContext();
   const modalRef = UseClickOutside(closeModal) as RefObject<HTMLDivElement>;
   const modalWrapper = useRef<HTMLDivElement | null>(null);
-  const [pseudonym, setPseudonym] = useState('');
-  const [content, setContent] = useState('');
 
   const modeMap = {
     newPost: 'Write your post....',
     reply: 'Write your reply....',
   };
+  useEffect(() => {
+    console.log('parent ID is', parentId);
+  }, []);
 
   function handleSubmit(evt: React.FormEvent<HTMLButtonElement>) {
     evt.preventDefault();
-    const data = {
-      pseudonym,
-      content,
-    };
-    if (mode === 'newPost') {
-      addPost(data);
+    console.log('handle Submit');
+    if (!validateContent()) {
+      console.log('errors', { error });
       return;
     }
-    addReply(data as replyPostType);
+
+    if (mode === 'newPost') {
+      addPost({
+        pseudonym,
+        content,
+      });
+      return;
+    }
+    if (mode === 'reply') {
+      console.log('inside the reply', parentId);
+
+      // TODO: Add error here
+      if (parentId === undefined) return;
+      addReply({
+        pseudonym,
+        content,
+        parentId,
+      });
+    }
+    // data.
   }
 
   return (

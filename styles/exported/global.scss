@@ -156,7 +156,7 @@ main {
   inset: 0;
   display: grid;
   place-items: center;
-
+  z-index: 2;
   background-color: rgba(#141c3a, 0.88);
 }
 .dialog {
@@ -165,7 +165,7 @@ main {
     flex-direction: column;
     gap: 2.5rem;
     margin-inline: auto;
-    width: fit-content;
+    width: min(100% - 1rem, 40rem);
   }
   padding-block: 7rem;
   width: min(100% - 1rem, 60rem);
@@ -180,10 +180,10 @@ main {
       padding-inline: 2.5rem;
       border: 3px solid var(--clr-primary-400);
       border-radius: 50px;
-      width: min(100% - 1rem, 40rem);
       background-color: var(--clr-neutral-200);
       color: var(--clr-neutral-800);
       box-shadow: none;
+      width: 100%;
       &::placeholder {
         color: var(--clr-neutral-600);
         font-size: var(fs-500);

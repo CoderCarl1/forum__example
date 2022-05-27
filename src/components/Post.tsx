@@ -27,10 +27,10 @@ export default function Post({
   id,
   likes,
   replies = [],
+  parentId,
 }: PostType) {
   const { likesState, setLikesState, likePost, dislikePost } = usePost();
   const { showModal, updateLikes } = usePostContext();
-
   useEffect(() => {
     if (likesState !== likes) {
       setLikesState(likes);
@@ -40,6 +40,10 @@ export default function Post({
   useEffect(() => {
     updateLikes({ id, likes: likesState });
   }, [likesState]);
+  useEffect(() => {
+    if (!parentId) console.log('no parent id for post', id);
+    if (parentId) console.log('post:', id, ' has a parentId of => ', parentId);
+  }, []);
 
   return (
     <>
@@ -72,7 +76,7 @@ export default function Post({
               <button
                 className="post__reply-button"
                 data-id={id}
-                onClick={() => showModal('reply')}
+                onClick={() => showModal({ mode: 'reply', parentId: id })}
               >
                 Reply
               </button>
@@ -83,7 +87,7 @@ export default function Post({
       {replies.length > 0 ? (
         <div className="post__reply-wrapper">
           {replies.map((post) => (
-            <Post {...post} />
+            <Post key={`post-${post.id}`} {...post} />
           ))}
         </div>
       ) : null}
