@@ -1,14 +1,16 @@
-import { log } from 'console';
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { forwardRef, RefObject, useRef, useState } from 'react';
 import { usePostContext } from '../context/postContext';
-import type { modalTypes, newPostType, replyPostType } from '../types';
-import UseClickOutside from '../utils/useClickOutside';
+import type { modalTypes } from '../types';
+// import UseClickOutside from '../utils/useClickOutside';
 
 function useModal() {
   const [error, setError] = useState({ msg: '', type: '' });
   const [pseudonym, setPseudonym] = useState('');
   const [content, setContent] = useState('');
-
+  const modeMap = {
+    newPost: 'Write your post....',
+    reply: 'Write your reply....',
+  };
   function validateContent() {
     let errorValues = {
       msg: '',
@@ -34,6 +36,7 @@ function useModal() {
   }
 
   return {
+    modeMap,
     error,
     pseudonym,
     setPseudonym,
@@ -43,7 +46,7 @@ function useModal() {
   };
 }
 
-export default function Modal({ mode, parentId }: modalTypes) {
+const Modal = forwardRef(({ mode, parentId }: modalTypes, ref) => {
   const {
     error,
     pseudonym,
@@ -51,52 +54,37 @@ export default function Modal({ mode, parentId }: modalTypes) {
     content,
     setContent,
     validateContent,
+    modeMap,
   } = useModal();
-  const { closeModal, addPost, addReply } = usePostContext();
-  const modalRef = UseClickOutside(closeModal) as RefObject<HTMLDivElement>;
-  const modalWrapper = useRef<HTMLDivElement | null>(null);
 
-  const modeMap = {
-    newPost: 'Write your post....',
-    reply: 'Write your reply....',
-  };
-  useEffect(() => {
-    console.log('parent ID is', parentId);
-  }, []);
+  const { addPost, addReply } = usePostContext();
+  // const modalRef = UseClickOutside(closeModal) as RefObject<HTMLDivElement>;
+  const modalWrapper = useRef<HTMLDivElement | null>(null);
 
   function handleSubmit(evt: React.FormEvent<HTMLButtonElement>) {
     evt.preventDefault();
-    console.log('handle Submit');
     if (!validateContent()) {
-      console.log('errors', { error });
+      // TODO: add error handling
+      console.warn('errors', { error });
       return;
     }
-
+    const data = { pseudonym, content };
     if (mode === 'newPost') {
-      addPost({
-        pseudonym,
-        content,
-      });
+      addPost(data);
       return;
     }
     if (mode === 'reply') {
-      console.log('inside the reply', parentId);
-
       // TODO: Add error here
       if (parentId === undefined) return;
-      addReply({
-        pseudonym,
-        content,
-        parentId,
-      });
+
+      addReply({ reply: data, parentId });
     }
-    // data.
   }
 
   return (
     <div className="dialog-wrapper" ref={modalWrapper}>
       <div
-        ref={modalRef}
+        ref={ref as RefObject<HTMLDivElement>}
         role="dialog"
         aria-description={modeMap[mode]}
         aria-label={`Write your ${mode}`}
@@ -135,4 +123,6 @@ export default function Modal({ mode, parentId }: modalTypes) {
       </div>
     </div>
   );
-}
+});
+
+export default Modal;

@@ -2,17 +2,18 @@ import { ReactNode } from 'react';
 
 export type PostType = {
   id: string;
+  likes: number;
   parentId?: string;
   pseudonym: string;
   content: string;
-  likes: number;
-  replies?: PostType[];
+  replies: PostType[];
 };
 
 // ONLY psuedonym & content
 export type newPostType = Omit<PostType, 'id' | 'likes' | 'replies'>;
 // TODO:
-export type replyPostType = newPostType & {
+export type replyPostType = {
+  reply: newPostType;
   parentId: string;
 };
 //ONLY ID of the post + new likes data

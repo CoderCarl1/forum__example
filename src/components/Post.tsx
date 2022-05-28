@@ -27,7 +27,6 @@ export default function Post({
   id,
   likes,
   replies = [],
-  parentId,
 }: PostType) {
   const { likesState, setLikesState, likePost, dislikePost } = usePost();
   const { showModal, updateLikes } = usePostContext();
@@ -40,10 +39,6 @@ export default function Post({
   useEffect(() => {
     updateLikes({ id, likes: likesState });
   }, [likesState]);
-  useEffect(() => {
-    if (!parentId) console.log('no parent id for post', id);
-    if (parentId) console.log('post:', id, ' has a parentId of => ', parentId);
-  }, []);
 
   return (
     <>

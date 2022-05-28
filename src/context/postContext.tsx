@@ -1,5 +1,12 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { testData } from './testData';
 import type {
   modalTypes,
   PostType,
@@ -12,46 +19,8 @@ import type {
 const PostContext = createContext({} as PostContextTypes);
 PostContext.displayName = 'Post Context';
 
-const id1 = uuidv4();
-const id2 = uuidv4();
-
-const postsData = [
-  {
-    content:
-      'TIL, a^2+b^2=c^2. If only I had an easy way to type that equation online!',
-    pseudonym: 'Pythagoras',
-    id: id1,
-    likes: 362,
-    replies: [
-      {
-        content:
-          'LIES! The radical left are trying to corrupt our beautiful right angles!',
-        pseudonym: 'US President',
-        id: uuidv4(),
-        likes: -182,
-        parentId: id1,
-      },
-      {
-        content:
-          'Prow scuttle parrel provost Sail ho shrouds spirits boom mizzenmast yardarm. Pinnace holystone mizzenmast quarter crow’s nest nipperkin grog yardarm hempen halter furl. Swab barque interloper .',
-        pseudonym: 'Holystone',
-        id: uuidv4(),
-        likes: 10,
-        parentId: id1,
-      },
-    ],
-  },
-  {
-    content:
-      'Deadlights jack lad schooner scallywag dance the hempen jig carouser broadside cable strike colors. Bring a spring upon her cable holystone blow the man down spanker Shiver me timbers to go on account lookout wherry doubloon chase. Belay yo-ho-ho keelhaul squiffy black spot yardarm spyglass sheet transom heave to.',
-    pseudonym: 'Deadlights',
-    id: id2,
-    likes: 1978,
-  },
-];
-
 function PostProvider({ children }: PostProviderProps) {
-  const [posts, setPosts] = useState<PostType[]>(postsData);
+  const [posts, setPosts] = useState<PostType[]>(testData);
   const [parentId, setParentId] = useState('');
 
   const [modalState, setModalState] = useState({
@@ -97,57 +66,64 @@ function PostProvider({ children }: PostProviderProps) {
       replyModal: false,
     });
     setParentId('');
-    console.log('close modal run', modalState);
   }
 
-  // TODO: set up recursive find method
-  // function findPost(postArr: PostType[], id: string){
-  //   let result = '';
+  function findPost(postArr: PostType[], id: string): PostType | undefined {
+    if (postArr.length === 0) return;
+    let foundPost = postArr.find((post) => post.id === id);
+    if (foundPost) return foundPost;
 
-  //   let parentId = postArr.find(post => post.id === id);
-  //   for (const [key, value] in postArr) {
-  //     // if post.id === id
-  //     if (post.id !== id && post)
-  //     findPost(post.replies, id);
-  //   }
-  //   if (parentId === undefined)
-  // }
+    for (let i = 0; i < postArr.length; i++) {
+      return findPost(postArr[i].replies, id);
+    }
+  }
 
   function updateLikes(data: updateLikesType) {
-    // TODO: Error handling -> throw new Error('post not found... something something darkside');
-    // if (posts === null) return;
     const { id, likes } = data;
+    if (!id || !likes) return;
 
-    // TODO: reference the findPost, find the post and then update the likes
-    // console.log('is Array? => ', Array.isArray(posts));
-    // console.log('backup typechecker => ', typeof posts);
-    // const post = posts.find((post) => post.id === id);
+    const clonedPosts = [...posts];
+    const post = findPost(clonedPosts, id);
+    // TODO: Error handling -> throw new Error('post not found... something something darkside');
+    if (!post) return;
+
+    post.likes = likes;
+    setPosts(clonedPosts);
+  }
+
+  function compilePost(data: newPostType): PostType {
+    return {
+      ...data,
+      id: uuidv4(),
+      likes: 0,
+      replies: [],
+    };
   }
 
   function addPost(data: newPostType) {
     if (!data) return;
 
-    const compiledData = { ...data, id: uuidv4() } as PostType;
+    const compiledPost = compilePost(data);
 
     if (!posts) {
-      setPosts([compiledData]);
+      setPosts([compiledPost]);
     } else {
-      setPosts([...posts, compiledData]);
+      setPosts([...posts, compiledPost]);
     }
     closeModal();
-
-    console.log('NEW POST added', { posts });
   }
 
   function addReply(data: replyPostType) {
-    console.log('inside add Reply Func');
-    const clonedPosts = [...posts];
-    console.log('clonedPosts', { clonedPosts });
-    // TODO: reference the findPost, find the post and then add a reply to it
+    const { reply, parentId } = data;
 
-    // const parentPost = find(clonedPosts, parentId);
-    // console.log('parent is => ', { parentPost });
-    console.log('reply added');
+    const clonedPosts = [...posts];
+    const post = findPost(clonedPosts, parentId);
+    const compiledPost = compilePost(reply);
+    if (!post) return;
+
+    post.replies = [...post.replies, compiledPost];
+
+    setPosts(clonedPosts);
     closeModal();
   }
 
