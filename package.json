@@ -22,8 +22,10 @@
   },
   "scripts": {
     "lint": "eslint --ignore-path .gitignore --fix",
-    "dev": "npm-run-all --parallel lint dev:css start",
+    "dev:all": "npm-run-all --parallel lint dev:css start",
     "dev:css": "sass styles/exported:src/styles --watch --update --style=expanded",
+    "build:all": "npm-run-all build:css build",
+    "build:css": "sass styles/exported:src/styles --style=compressed ",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "start": "react-scripts start",
