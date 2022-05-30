@@ -1,6 +1,9 @@
-import { forwardRef, RefObject, useRef, useState } from 'react';
+import { forwardRef, RefObject, useEffect, useRef, useState } from 'react';
 import { usePostContext } from '../context/postContext';
 import type { modalTypes } from '../types';
+import { setFocusableElements } from '../utils/helpers';
+import UseClickOutside from '../utils/useClickOutside';
+import useKeyboard from '../utils/useKeyboard';
 // import UseClickOutside from '../utils/useClickOutside';
 
 function useModal() {
@@ -46,7 +49,7 @@ function useModal() {
   };
 }
 
-const Modal = forwardRef(({ mode, parentId }: modalTypes, ref) => {
+function Modal({ mode, parentId }: modalTypes) {
   const {
     error,
     pseudonym,
@@ -57,9 +60,23 @@ const Modal = forwardRef(({ mode, parentId }: modalTypes, ref) => {
     modeMap,
   } = useModal();
 
-  const { addPost, addReply } = usePostContext();
+  const {
+    modalState: { shown },
+    addPost,
+    addReply,
+    closeModal,
+  } = usePostContext();
   // const modalRef = UseClickOutside(closeModal) as RefObject<HTMLDivElement>;
   const modalWrapper = useRef<HTMLDivElement | null>(null);
+  const modalRef = UseClickOutside(closeModal);
+
+  useEffect(() => {
+    if (shown && modalRef.current !== null) {
+      modalRef.current.focus();
+    }
+  }, [shown]);
+
+  useKeyboard(modalRef, closeModal);
 
   function handleSubmit(evt: React.FormEvent<HTMLButtonElement>) {
     evt.preventDefault();
@@ -84,7 +101,7 @@ const Modal = forwardRef(({ mode, parentId }: modalTypes, ref) => {
   return (
     <div className="dialog-wrapper" ref={modalWrapper}>
       <div
-        ref={ref as RefObject<HTMLDivElement>}
+        ref={modalRef as RefObject<HTMLDivElement>}
         role="dialog"
         aria-description={modeMap[mode]}
         aria-label={`Write your ${mode}`}
@@ -123,6 +140,6 @@ const Modal = forwardRef(({ mode, parentId }: modalTypes, ref) => {
       </div>
     </div>
   );
-});
+}
 
 export default Modal;
